@@ -1,65 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, Pressable, StyleSheet, ImageBackground } from 'react-native';
+import { Audio } from 'expo-av';
 
 export default function App() {
     const [health, setHealth] = useState(50);
     const [food, setFood] = useState(50);
+    const [hungryText, setHungryText] = useState('');
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setHealth(prevHealth => (prevHealth > 0 ? prevHealth - 1.5 : 0)); 
+            setHealth(prevHealth => (prevHealth > 0 ? prevHealth - 1.2 : 0));
         }, 1250);
         return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
-        const intervaal = setInterval(() => {
-            setFood(prevHappyness => (prevHappyness > 0 ? prevHappyness - 2 : 0));
-        }, 1000);
-        return () => clearInterval(intervaal);
+        const interval = setInterval(() => {
+            setFood(prevFood => (prevFood > 0 ? prevFood - 2 : 0));
+        }, 1500);
+        return () => clearInterval(interval);
     }, []);
 
-    const feedPet = () => {
+    useEffect(() => {
+        if (food === 0) {
+            setHungryText('HUNGRY');
+        } else {
+            setHungryText('');
+        }
+    }, [food]);
+
+    const happypet = () => {
         if (food > 0) {
-            setFood(prevHappyness => (prevHappyness <= 70 ? prevHappyness + 10 : 0));
+            setFood(prevFood => (prevFood <= 70 ? Math.min(prevFood + 10, 60) : 70));
+            setHungryText('');
         }
     };
 
     const petPet = () => {
-        setHealth(prevHealth => (prevHealth <= 70 ? Math.min(prevHealth + 10, 50) : 70)); 
+        setHealth(prevHealth => (prevHealth <= 70 ? Math.min(prevHealth + 10, 60) : 70));
     };
 
-
-    const petImageSource = health === 0
-        ? require('./images/dead.png')
-        : health >= 50
-            ? require('./images/happy.png')
-            : require('./images/sad.png');
-
+    const petImageSource =
+        health === 0
+            ? require('./images/dead.png')
+            : health >= 50
+                ? require('./images/happy.png')
+                : require('./images/sad.png');
 
     return (
         <View style={styles.container}>
             <ImageBackground source={require('./images/main.png')} style={styles.background}>
-            <Image source={petImageSource} style={styles.petImage} />
+                <Image source={petImageSource} style={styles.petImage} />
+                <Text style={styles.hungryText}>{hungryText}</Text>
 
-            <View style={styles.buttonContainer}>
-                <Pressable style={styles.button} onPress={petPet}>
-                    <Text style={styles.buttonText}>Feed ME</Text>
-                </Pressable>
+                <View style={styles.buttonContainer}>
+                    <Pressable style={styles.button} onPress={petPet}>
+                        <Text style={styles.buttonText}>Feed ME</Text>
+                    </Pressable>
 
-                <Pressable style={styles.button} onPress={feedPet}>
-                    <Text style={styles.buttonText}>pet</Text>
-                </Pressable>
-            </View>
+                    <Pressable style={styles.button} onPress={happypet}>
+                        <Text style={styles.buttonText}>Pet</Text>
+                    </Pressable>
+                </View>
 
-            <View style={styles.barContainer}>
-                <Text style={styles.barText}>Health/FOOD</Text>
-                <View style={[styles.bar, { width: health + '%' }]} />
-            </View>
+                <View style={styles.barContainer}>
+                    <Text style={styles.barText}>Health</Text>
+                    <View style={[styles.bar, { width: health + '%' }]} />
+                </View>
 
-            <View style={styles.barContainer}>
-                <Text style={styles.barText}>MOOD</Text>
-                <View style={[styles.bar, { width: food + '%' }]} />
+                <View style={styles.barContainer}>
+                    <Text style={styles.barText}>MOOD</Text>
+                    <View style={[styles.bars, { width: food + '%' }]} />
                 </View>
             </ImageBackground>
         </View>
@@ -73,7 +84,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
     },
-
     background: {
         flex: 1,
         resizeMode: 'cover',
@@ -113,5 +123,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#4caf50',
         minWidth: 20,
         borderRadius: 15,
+    },
+
+    bars: {
+        height: 20,
+        backgroundColor: 'blue',
+        minWidth: 20,
+        borderRadius: 15,
+    },
+    hungryText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'red',
+        marginBottom: 10,
     },
 });
