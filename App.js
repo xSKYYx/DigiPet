@@ -29,6 +29,7 @@ export default function App() {
         setHealth(prevHealth => (prevHealth <= 70 ? Math.min(prevHealth + 10, 50) : 70)); 
     };
 
+
     const petImageSource = health === 0
         ? require('./images/dead.png')
         : health >= 50
