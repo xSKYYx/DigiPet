@@ -7,20 +7,23 @@ export default function App() {
     const [food, setFood] = useState(50);
     const [hungryText, setHungryText] = useState('');
 
+    //this is going to set the health and set the take away from health/hunger bar. -1.2points/1.25 seconds.
     useEffect(() => {
         const interval = setInterval(() => {
-            setHealth(prevHealth => (prevHealth > 0 ? prevHealth - 1.2 : 0));
+            setHealth(prevfood => (prevfood > 0 ? prevfood - 1.2 : 0));
         }, 1250);
         return () => clearInterval(interval);
     }, []);
 
+    // this is going to set the mood bar . also the take away from mood bar. -2/1.5seconds
     useEffect(() => {
         const interval = setInterval(() => {
-            setFood(prevFood => (prevFood > 0 ? prevFood - 2 : 0));
+            setFood(prevmood => (prevmood > 0 ? prevmood - 2 : 0));
         }, 1500);
         return () => clearInterval(interval);
     }, []);
 
+    //display message when food bar reachers 0 or low levels.
     useEffect(() => {
         if (food === 0) {
             setHungryText('HUNGRY');
@@ -28,18 +31,19 @@ export default function App() {
             setHungryText('');
         }
     }, [food]);
-
+    //the bar and max limit
     const happypet = () => {
         if (food > 0) {
-            setFood(prevFood => (prevFood <= 70 ? Math.min(prevFood + 10, 60) : 70));
+            setFood(prevmood => (prevmood <= 70 ? Math.min(prevmood + 10, 60) : 70));
             setHungryText('');
         }
     };
-
+    //the bar and max limit
     const petPet = () => {
-        setHealth(prevHealth => (prevHealth <= 70 ? Math.min(prevHealth + 10, 60) : 70));
+        setHealth(prevfood => (prevfood <= 70 ? Math.min(prevfood + 10, 60) : 70));
     };
 
+    //image display as well changees depending on the bar level.
     const petImageSource =
         health === 0
             ? require('./images/dead.png')
